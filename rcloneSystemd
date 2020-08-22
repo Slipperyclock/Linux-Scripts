@@ -1,0 +1,28 @@
+
+[Unit]
+Description=Wasabi Encrypted(rclone)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=notify
+Environment=RCLONE_CONFIG=/root/.config/rclone/rclone.conf
+KillMode=none
+RestartSec=5
+ExecStart=/usr/bin/rclone mount bulldeuce: /opt/mailcow-dockerized/data/web/nextcloud/data/wasabi \
+--low-level-retries 1 \
+--stats 0 \
+--timeout 30s \
+--vfs-cache-mode writes \
+--allow-other \
+--uid 82 \
+--gid 82 \
+--dir-perms 0755 \
+--file-perms 0755 \
+--log-level INFO \
+--log-file /var/log/rclone.log
+ExecStop=/bin/fusermount -uz /opt/mailcow-dockerized/data/web/nextcloud/data/wasabi
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
